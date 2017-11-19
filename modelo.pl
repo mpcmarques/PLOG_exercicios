@@ -1,3 +1,5 @@
+:- use_module(library(lists)).
+
 %participant(Id,Age,Performance)
 participant(1234, 17, 'Pé coxinho').
 participant(3423, 21, 'Programar com os pés').
@@ -66,6 +68,59 @@ allPerfs :-
 perf(Id, Performance, Times) :-
     performance(Id, Times),
     participant(Id, _, Performance).
+
+%nsuccessfullParticipants(T)
+nsuccessfullParticipants(T) :-
+    findall(Times, performance(_, Times), L),
+    numberOfSuccessfull(L, 0, T).
+
+numberOfSuccessfull([],N, N).
+numberOfSuccessfull([H | T], NTimes, NTimesFinal):-
+    (isSuccessfull(H) -> NewTimes is NTimes+1 ; NewTimes is NTimes),
+    numberOfSuccessfull(T, NewTimes, NTimesFinal).
+    
+isSuccessfull([]).
+isSuccessfull([H | T]) :-
+    H = 120,
+    isSuccessfull(T).
+
+%juriFans(L)
+juriFans(T) :-
+    findall(Id, performance(Id, _), IDs),
+    findall(Times, performance(_, Times), L),
+    juriFansAux(IDs, L, [], L2),
+    reverse(L2, T).
+
+juriFansAux(IDs, Times, Lista, FinalList):-
+    append(_, [Id | Lc], IDs),
+    juriFansAux2(Id, 1, [], Juris),
+    append([Id - Juris], Lista, Lista1),
+    juriFansAux(Lc, Times, Lista1, FinalList).
+
+juriFansAux(_, _, A, A).
+
+juriFansAux2(Performance, JuriMember, Lista, FinalList):-
+    timeForJuri(Performance, JuriMember, Time),
+    (Time = 120 -> append([JuriMember],Lista, Lista2) ; Lista2  = Lista),
+    JuriMember2 is JuriMember+1,
+    juriFansAux2(Performance, JuriMember2, Lista2, FinalList).
+
+juriFansAux2(_, _, B, A) :- reverse(B, A).
+
+
+%eligibleOutcome(Id,Perf,TT) :-
+eligibleOutcome(Id, Perf, TT):-
+    performance(Id,Times),
+    madeItThrough(Id),
+    participant(Id,_,Perf),
+    sumlist(Times,TT).
+
+%nextPhase(+N, -Participants)
+
+%impoe(X, L)
+impoe(X,L) :-
+    length(Mid,X),
+    append(L1,[X|_],L), append(_,[X|Mid],L1).
 
 
     
