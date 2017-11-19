@@ -97,14 +97,14 @@ conta_elem(X, [H | T], N):-
 
 %====== 9 TODO 
 %9a substitui(X,Y,Lista1,Lista2)
-substitui(X, Y, Lista1, Lista2):-
-    substituiFirst(X, Y, Lista1, Lc),
-    write(Lista1), nl, write(Lc), nl.
-    %substitui()
+substitui(_,_,[],A,B) :- reverse(A, B).
 
-substituiFirst(X, Y, Lista1, Lista2) :-
+substitui(X, Y, Lista1, Lista2, ListaF):-
     append(_, [A | Lb], Lista1),
-    (A = X -> append([Y], Lb, Lista2) ; append([A], Lb, Lista2)).
+    (A = X -> append([Y], Lista2, Lc) ; append([A], Lista2, Lc)),
+    substitui(X, Y, Lb, Lc, ListaF).
 
+substitui(X, Y, Lista1, Lista2):-
+   substitui(X, Y, Lista1, [], Lista2).
 
 
