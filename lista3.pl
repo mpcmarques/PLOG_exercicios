@@ -107,4 +107,24 @@ substitui(X, Y, Lista1, Lista2, ListaF):-
 substitui(X, Y, Lista1, Lista2):-
    substitui(X, Y, Lista1, [], Lista2).
 
+%9b elimina_duplicados
+elimina_duplicados(Lista1, Lista2):-
+    elimina_duplicados(Lista1, [], Lista2).
+
+elimina_duplicados([H | T], Lista1, ListaFinal):-
+    (member(H, Lista1) -> Lista2 = Lista1 ; append([H], Lista1, Lista2)),
+    elimina_duplicados(T, Lista2, ListaFinal).
+
+elimina_duplicados([], A, B) :- reverse(A, B).
+
+% ======== 10
+%10 a
+ordenada([_]).
+ordenada([N1,N2]) :- N1 =< N2.
+ordenada([N1, N2 | Resto]):-
+    N1 =< N2,
+    ordenada([N2 | Resto]).
+
+%10 b
+    
 
