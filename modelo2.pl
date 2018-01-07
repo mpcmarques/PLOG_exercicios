@@ -13,23 +13,26 @@ gen(L1,[X|L2]) :-
 
 test([_,_]).
 test([X1,X2,X3|Xs]) :-
-    (X1 < X2, X2 < X3; X1 > X2, X2 > X3),
+    (X1 #< X2, X2 #< X3; X1 #> X2, X2 #> X3),
     test([X2,X3|Xs]).
 
 % ex 2
 p2(L1,L2) :-
-    length(L1,N),
-    length(L2,N),
-    %
-    pos(L1,L2,Is),
+    length(L1, N),
+    length(L2, N),
+    length(Is, N),
+    domain(Is, 0, N),
+
+    % restricoes
     all_distinct(Is),
-    %
-    labeling([],Is),
-    test(L2).
+    pos(L1, L2, Is),
+    test(L2),
+
+    labeling([],Is).
 
 pos([],_,[]).
 pos([X|Xs],L2,[I|Is]) :-
-    nth1(I,L2,X),
+    element(I,L2,X),
     pos(Xs,L2,Is).
 
 % ex 4
@@ -64,3 +67,41 @@ sweet_recipes(MaxTime, NEggs, RecipeTimes, RecipeEggs, Cookings, Eggs):-
 
     % pesquisa
     labeling([maximize(Eggs)], [A,B,C]).
+
+% Ex. 5
+% corta(+Pranchas,+Prateleiras,-PranchasSelecionadas) 
+corta(Pranchas, Prateleiras, PranchasSelecionadas):-
+    length(Prateleiras, Nprateleiras),
+    length(Pranchas, Npranchas),
+    length(PranchasSelecionadas, Nprateleiras),
+    domain(PranchasSelecionadas, 1, Npranchas),
+
+    % restricoes - nenhuma prancha e usada de forma excessiva
+    getMachines(Pranchas, Machines),
+    getTasks(Prateleiras, PranchasSelecionadas, Tasks),
+    cumulatives(Tasks, Machines, [bound(upper)]),
+
+    % pesquisa
+    labeling([], PranchasSelecionadas).
+
+
+getMachines(Pranchas, Machines):- getMachines(Pranchas, 1, [], Machines).
+getMachines([],_, A, A).
+getMachines([Prancha|P], Id, Machines, MachinesFinal):-
+    append(Machines, [machine(Id, Prancha)], Machines2),
+    Id1 is Id+1,
+    getMachines(P, Id1, Machines2, MachinesFinal).
+
+getTasks(Prateleiras, PranchasSelecionadas, Tasks):-
+    getTasks(Prateleiras, PranchasSelecionadas, [], Tasks).
+getTasks([], [], A, A).
+getTasks([CurrPrateleira | Prateleiras], [SelectedPrancha | SelectedPranchas], TasksTemp, Tasks):-
+    append(TasksTemp, [task(0, 1, 1, CurrPrateleira, SelectedPrancha)], TasksTemp2),
+    getTasks(Prateleiras, SelectedPranchas, TasksTemp2, Tasks).
+
+
+
+
+    
+
+
