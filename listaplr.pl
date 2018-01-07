@@ -163,7 +163,7 @@ putoMercearia(Arroz, Batata, Esparguete, Atum):-
 
     % restricoes
     Arroz + Batata + Esparguete + Atum #= 711,
-    Arroz * Batata * Esparguete * Atum #= 711,
+    %Arroz * Batata * Esparguete * Atum #= 711,
     
     (
         (Arroz * Batata) mod 10 #= 0 ;
@@ -194,6 +194,61 @@ zerozeros(A,B):-
 
     % labeling
     labeling([],[A, B]).
+
+
+% ============ PROBLEMAS DE LOGICA SIMPLES =============
+
+% 1 TODO: - Maquinista
+maquinista(Maquinista):-
+    Solucao = [Empregados, Nomes, Passageiros, Cidades, Salarios],
+    Empregados = [Revisor, Foguista, Maquinista],
+    Ocupacao = [Passageiro, Empregado],
+    Passageiros = [SrFerreira, SrRocha, SrSilva, Ferreira, Rocha, Silva],
+    Cidades = [Detroit, Chicago, Meio],
+    Salarios = [DezMil, TrintaMil ],
+    flatten(Solucao, List),
+    domain(List, 1, 6),
+
+    % restricoes
+   
+
+    SrRocha #= Detroit,
+    Revisor #= Meio,
+    Silva #\= Foguista,
+    SrFerreira #= DezMil,
+
+    % pesquisa
+    labeling([], List).
+
+% 2 - Três Músicos
+tresMusicos(Instrumentos):-
+    Solucao = [Musicos, Instrumentos, Dias],
+    Musicos = [Joao, Antonio, Francisco],
+    Instrumentos = [Harpa, Violino, Piano],
+    Dias = [Terca, Quinta1, Quinta2],
+    flatten(Solucao, List),
+    domain(List, 1, 3),
+
+    % restricoes
+    all_distinct(Musicos),
+    all_distinct(Instrumentos),
+    all_distinct(Dias),
+
+    Joao #= 1,
+    Antonio #= 2,
+    Francisco #= 3,
+    Antonio #\= Piano, 
+    Piano #= Terca,
+    Joao #= Quinta1,
+    Antonio #= Quinta2,
+
+
+    labeling([], List).
+
+
+% 3 - Centro Comercial
+
+    
     
 % ======= PROBLEMAS DE LOGICA AVANÇADOS ======
 
@@ -242,15 +297,43 @@ hexagonoMagico(List):-
 
 sum38(List):- sum(List, #=, 38).
 
-% 3 - Luzes
-/*
-luzes(Minumum):-
-    % definir variaveis e dominios.
+% 3 - TODO: Luzes
+luzes(List):-
+    % definir variaveis e domínios.
     List = [[A,B,C,D], [E,F,G,H], [I,J,K,L], [M,N,O,P]],
     flatten(List, FlatList),
     domain(FlatList, 0,1),
 
-    transpose(List, CollumnsList),*/
+    % aplicar restricoes
+    escolherLinhaEColuna(Linha, Coluna),
+    ligarElemento(List, Linha, Coluna),
+
+    % fazer pesquisa.
+    labeling([], FlatList).
+
+
+escolherLinhaEColuna(Linha, Coluna):-
+    Linha #>= 0,
+    Linha #=< 4,
+    Coluna #>= 0,
+    Coluna #=< 4.
+
+ligarElemento(Lista, NLinha, NColuna):-
+    nth0(NLinha, Lista, Linha),
+    ligarLinha(Linha),
+    transpose(Lista, TransLista),
+    nth0(NColuna, TransLista, Coluna),
+    ligarLinha(Coluna).
+
+ligarLinha([]).
+ligarLinha([H | T]):-
+    H \== 1,
+    H #= 1,
+    ligarLinha(T).
+ligarLinha([_ | T]):-ligarLinha(T).
+
+
+
 
 % 5 - Tumografia
 tumografia(ListaSomaLinhas, ListaSomaColunas, MatrizFlat):-
@@ -290,4 +373,27 @@ criarLinha(N, [_|T]):-
 
 criarLinha(0, []).
 
-% 6 - Amazons
+% 6 TODO: - Amazons
+% 7 TODO: - Ataques de Damas
+% 8 TODO: - Azulejos
+% 9 TODO: - Transportes Simples
+% 10 TODO: - Torneio de Golfe
+% 11 TODO: - Localização de Armazéns
+
+
+% TODO: 12  - Puzzle Dominos
+puzzleDominos(Grid):-
+    % variaveis e dominios
+
+    % crir grid de variaveis
+    length(Grid, 7),
+    lengthLine(Grid),
+
+    labeling([], Grid).
+
+    
+lengthLine([]).
+lengthLine([H | T]):-
+    length(H, 8),
+    lengthLine(T).
+
